@@ -200,7 +200,7 @@
         <div class="panel-frame">
           <div class="panel-frame-bar">
             <span class="panel-dot"></span><span class="panel-dot"></span><span class="panel-dot"></span>
-            <span class="panel-frame-label"><span class="status-dot"></span>CANLI GÖRÜNÜM</span>
+            <span class="panel-frame-label"><span class="status-dot"></span></span>
           </div>
           <div class="panel-screen" data-gallery="${pi}">
             <span class="panel-scanline" aria-hidden="true"></span>
