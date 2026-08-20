@@ -1,0 +1,727 @@
+<!DOCTYPE html>
+<html lang="tr">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Ali Büyükuyar — Proje Panelleri</title>
+<meta name="description" content="Ali Büyükuyar'ın Excel VBA ve SQL tabanlı veri analizi, raporlama ve süreç otomasyonu projeleri.">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@500;600;700&family=Inter:wght@400;500;600&family=IBM+Plex+Mono:wght@400;500;600&display=swap" rel="stylesheet">
+<style>
+  :root{
+    --bg-dark:#11151E;
+    --bg-dark-2:#161B27;
+    --bg-light:#F3F4F6;
+    --panel:#FFFFFF;
+    --navy:#1F2A44;
+    --teal:#1F8A70;
+    --cyan:#33D6C6;
+    --cyan-dim:#1B7F76;
+    --slate:#3D4859;
+    --muted:#7B8494;
+    --line:#DEE1E7;
+    --line-dark:#232B3B;
+    --amber:#E0A526;
+    --green:#3FBE6B;
+    --radius:10px;
+    --display:'Space Grotesk',sans-serif;
+    --body:'Inter',sans-serif;
+    --mono:'IBM Plex Mono',monospace;
+  }
+  *{box-sizing:border-box;}
+  html{scroll-behavior:smooth;}
+  body{
+    margin:0;
+    background:var(--bg-light);
+    color:var(--slate);
+    font-family:var(--body);
+    -webkit-font-smoothing:antialiased;
+  }
+  img{max-width:100%;display:block;}
+  a{color:inherit;}
+
+  ::-webkit-scrollbar{width:10px; height:10px;}
+  ::-webkit-scrollbar-track{background:var(--bg-light);}
+  ::-webkit-scrollbar-thumb{background:#C3C9D3; border-radius:10px;}
+  ::-webkit-scrollbar-thumb:hover{background:var(--cyan-dim);}
+
+  /* ---------- SCROLL PROGRESS ---------- */
+  .scroll-progress{
+    position:fixed; top:0; left:0; height:3px; width:0%;
+    background:linear-gradient(90deg, var(--teal), var(--cyan));
+    z-index:200;
+    box-shadow:0 0 10px rgba(51,214,198,0.5);
+    transition:width .08s linear;
+  }
+
+  /* ---------- SIDE NAV ---------- */
+  .side-nav{
+    position:fixed; right:22px; top:50%; transform:translateY(-50%);
+    display:flex; flex-direction:column; gap:10px;
+    z-index:90;
+  }
+  .side-nav a{
+    width:9px; height:9px; border-radius:50%;
+    background:#CBD1DB; border:1px solid #B9C0CC;
+    transition:background .25s ease, transform .25s ease, border-color .25s ease;
+    position:relative;
+  }
+  .side-nav a:hover{transform:scale(1.3);}
+  .side-nav a::after{
+    content:attr(data-label);
+    position:absolute; right:20px; top:50%; transform:translateY(-50%);
+    font-family:var(--mono); font-size:11px; white-space:nowrap;
+    background:var(--navy); color:#fff; padding:4px 9px; border-radius:5px;
+    opacity:0; pointer-events:none; transition:opacity .18s ease;
+  }
+  .side-nav a:hover::after{opacity:1;}
+  .side-nav a.active{background:var(--cyan); border-color:var(--cyan); box-shadow:0 0 0 4px rgba(51,214,198,0.18);}
+  @media(max-width:900px){ .side-nav{display:none;} }
+
+  /* ---------- HERO ---------- */
+  .hero{
+    position:relative;
+    background:
+      radial-gradient(circle at 82% -10%, rgba(51,214,198,0.16), transparent 45%),
+      linear-gradient(180deg,var(--bg-dark) 0%, var(--bg-dark-2) 100%);
+    color:#EDEFF4;
+    padding:64px 24px 56px;
+    overflow:hidden;
+  }
+  .hero::before{
+    content:"";
+    position:absolute; inset:0;
+    background-image:
+      linear-gradient(rgba(255,255,255,0.035) 1px, transparent 1px),
+      linear-gradient(90deg, rgba(255,255,255,0.035) 1px, transparent 1px);
+    background-size:42px 42px;
+    mask-image:linear-gradient(180deg, black, transparent 75%);
+    pointer-events:none;
+  }
+  .hero-spot{
+    position:absolute; inset:0; pointer-events:none;
+    background:radial-gradient(320px circle at var(--x,50%) var(--y,20%), rgba(51,214,198,0.10), transparent 60%);
+    transition:background .05s linear;
+  }
+  .hero-grid{
+    position:relative; max-width:900px; margin:0 auto;
+  }
+  .hero-inner{position:relative;}
+  .status-eyebrow{
+    display:inline-flex; align-items:center; gap:8px;
+    font-family:var(--mono); font-size:12.5px; letter-spacing:.09em;
+    color:var(--cyan); text-transform:uppercase;
+    border:1px solid rgba(51,214,198,0.35);
+    background:rgba(51,214,198,0.07);
+    padding:6px 12px; border-radius:100px;
+    margin-bottom:26px;
+    animation:fadeUp .6s ease both;
+  }
+  .status-dot{
+    width:7px; height:7px; border-radius:50%;
+    background:var(--cyan);
+    box-shadow:0 0 0 3px rgba(51,214,198,0.18);
+    animation:pulseDot 2.4s ease-in-out infinite;
+  }
+  .hero h1{
+    font-family:var(--display);
+    font-weight:700;
+    font-size:clamp(2.4rem, 5.2vw, 3.7rem);
+    line-height:1.03;
+    margin:0 0 10px;
+    letter-spacing:-0.01em;
+    animation:fadeUp .6s ease .06s both;
+    position:relative;
+  }
+  .glitch-name{color:#fff;}
+  .glitch-name::after{
+    content:attr(data-text);
+    position:absolute; left:0; top:0;
+    color:var(--cyan);
+    opacity:.5;
+    transform:translate(2px,2px);
+    clip-path:inset(0 0 55% 0);
+    pointer-events:none;
+    z-index:-1;
+  }
+  .hero h2 .dim{color:var(--muted);}
+  .hero h2{
+    font-family:var(--mono);
+    font-weight:500;
+    font-size:clamp(0.95rem, 2vw, 1.15rem);
+    color:var(--cyan);
+    margin:0 0 22px;
+    letter-spacing:.02em;
+    animation:fadeUp .6s ease .12s both;
+  }
+  .hero p{
+    font-size:1.02rem;
+    line-height:1.65;
+    color:#B9BFCC;
+    max-width:640px;
+    margin:0 0 32px;
+    animation:fadeUp .6s ease .18s both;
+  }
+  .info-bar{
+    display:flex; flex-wrap:wrap; gap:0;
+    border:1px solid var(--line-dark);
+    border-radius:var(--radius);
+    overflow:hidden;
+    background:rgba(255,255,255,0.02);
+    animation:fadeUp .6s ease .24s both;
+  }
+  .info-cell{
+    flex:1 1 200px;
+    padding:13px 18px;
+    border-right:1px solid var(--line-dark);
+  }
+  .info-cell:last-child{border-right:none;}
+  .info-cell .k{
+    display:block; font-family:var(--mono); font-size:10.5px;
+    letter-spacing:.1em; text-transform:uppercase; color:var(--muted); margin-bottom:4px;
+  }
+  .info-cell .v{
+    font-family:var(--mono); font-size:13.5px; color:#E7E9EF; word-break:break-word;
+  }
+  .info-cell a.v{transition:color .2s ease;}
+  .info-cell a.v:hover{color:var(--cyan);}
+
+  .stat-strip{
+    display:flex; flex-wrap:wrap; gap:28px;
+    margin-top:30px;
+    animation:fadeUp .6s ease .3s both;
+  }
+  .stat{display:flex; flex-direction:column; gap:3px; margin-right:28px;}
+  .stat-num{
+    font-family:var(--display); font-weight:700; font-size:1.35rem;
+    color:#fff; letter-spacing:-.01em;
+  }
+  .stat-label{
+    font-family:var(--mono); font-size:10.5px; letter-spacing:.08em;
+    text-transform:uppercase; color:var(--muted);
+  }
+
+  @keyframes fadeUp{
+    from{transform:translateY(14px);}
+    to{transform:translateY(0);}
+  }
+  @keyframes pulseDot{
+    0%,100%{box-shadow:0 0 0 3px rgba(51,214,198,0.18);}
+    50%{box-shadow:0 0 0 7px rgba(51,214,198,0.06);}
+  }
+
+  /* ---------- MARQUEE ---------- */
+  .marquee{
+    background:var(--navy);
+    overflow:hidden;
+    border-top:1px solid rgba(255,255,255,0.08);
+    border-bottom:1px solid rgba(255,255,255,0.08);
+    padding:11px 0;
+  }
+  .marquee-track{
+    display:flex; gap:0; width:max-content;
+    animation:marqueeScroll 28s linear infinite;
+  }
+  .marquee-track span{
+    font-family:var(--mono); font-size:11.5px; letter-spacing:.1em;
+    color:#AEB6C6; text-transform:uppercase;
+    padding:0 22px;
+    border-right:1px solid rgba(255,255,255,0.12);
+  }
+  @keyframes marqueeScroll{
+    from{transform:translateX(0);}
+    to{transform:translateX(-50%);}
+  }
+
+  /* ---------- INTRO NOTE ---------- */
+  .confidential-note{
+    max-width:980px; margin:0 auto; padding:22px 24px 0;
+    font-family:var(--mono); font-size:12px; color:var(--muted);
+    display:flex; gap:8px; align-items:flex-start;
+  }
+  .confidential-note .mark{color:var(--amber); flex:none;}
+
+  /* ---------- MAIN / PANELS ---------- */
+  main{max-width:980px; margin:0 auto; padding:56px 24px 40px;}
+
+  .section-label{
+    font-family:var(--mono); font-size:12px; letter-spacing:.12em;
+    text-transform:uppercase; color:var(--teal); margin:0 0 6px;
+  }
+  .section-title{
+    font-family:var(--display); font-weight:600; font-size:1.5rem;
+    color:var(--navy); margin:0 0 36px;
+  }
+
+  .panel{
+    background:var(--panel);
+    border:1px solid var(--line);
+    border-radius:var(--radius);
+    margin-bottom:26px;
+    overflow:hidden;
+    position:relative;
+    padding-left:4px;
+    transition:transform .5s cubic-bezier(.16,1,.3,1), opacity .5s ease, box-shadow .3s ease;
+  }
+  .panel::before{
+    content:"";
+    position:absolute; left:0; top:0; bottom:0; width:4px;
+    background:var(--green);
+  }
+  .panel.progress::before{background:var(--amber);}
+  .panel.freelance-item::before{background:var(--cyan);}
+  .panel:hover{box-shadow:0 10px 30px rgba(31,42,68,0.10);}
+
+  .panel.pre-reveal{opacity:0; transform:translateY(24px);}
+  .panel.pre-reveal.in-view{opacity:1; transform:translateY(0);}
+
+  .panel-head{
+    display:flex; align-items:center; gap:14px; flex-wrap:wrap;
+    background:var(--navy);
+    color:#fff;
+    padding:14px 20px;
+  }
+  .panel-id{
+    font-family:var(--mono); font-size:12px; color:var(--cyan);
+    letter-spacing:.06em; flex:none; margin-right:14px;
+  }
+  .panel-title{
+    font-family:var(--display); font-weight:600; font-size:1.08rem;
+    margin:0; flex:1 1 auto; min-width:160px; margin-right:14px;
+  }
+  .panel-meta{
+    font-family:var(--mono); font-size:11.5px; color:#AEB6C6;
+    flex:none; margin-left:14px;
+  }
+  .tag{
+    font-family:var(--mono); font-size:10.5px; letter-spacing:.06em;
+    padding:4px 9px; border-radius:5px; text-transform:uppercase;
+    flex:none; font-weight:600; margin-right:14px;
+  }
+  .tag-done{background:rgba(63,190,107,0.16); color:#6FDE96; border:1px solid rgba(63,190,107,0.35);}
+  .tag-progress{background:rgba(224,165,38,0.16); color:#F0C161; border:1px solid rgba(224,165,38,0.35); animation:pulseTag 2.2s ease-in-out infinite;}
+  .tag-freelance{background:rgba(51,214,198,0.16); color:var(--cyan); border:1px solid rgba(51,214,198,0.4);}
+
+  @keyframes pulseTag{
+    0%,100%{opacity:1;}
+    50%{opacity:.55;}
+  }
+
+  .panel-body{
+    display:grid;
+    grid-template-columns: 1fr;
+    gap:0;
+  }
+  @media(min-width:860px){
+    .panel-body{grid-template-columns: 300px 1fr;}
+  }
+  .panel-desc{
+    padding:20px 22px;
+    font-size:14.5px;
+    line-height:1.65;
+    color:var(--slate);
+    border-bottom:1px solid var(--line);
+  }
+  @media(min-width:860px){
+    .panel-desc{border-bottom:none; border-right:1px solid var(--line);}
+  }
+  .panel-gallery{
+    display:flex; gap:12px; padding:18px; overflow-x:auto;
+    background:var(--bg-light);
+  }
+  .panel-gallery.single{overflow-x:visible;}
+  .shot{
+    flex:none; width:min(78vw, 340px);
+    border-radius:7px; overflow:hidden;
+    border:1px solid var(--line);
+    background:#0d1017;
+    cursor:zoom-in;
+    transition:border-color .25s ease, box-shadow .25s ease, transform .25s ease;
+  }
+  .panel-gallery.single .shot{width:100%;}
+  .shot:hover{border-color:var(--cyan); box-shadow:0 8px 24px rgba(31,42,68,0.18); transform:translateY(-3px);}
+  .shot .shot-inner{overflow:hidden; display:block;}
+  .shot img{width:100%; height:auto; display:block; transition:transform .4s ease;}
+  .shot:hover img{transform:scale(1.045);}
+
+  /* progress-only panel (no screenshots yet) */
+  .panel.progress .panel-body{grid-template-columns:1fr;}
+  .panel.progress .panel-desc{border-right:none;}
+  .panel.progress{border-style:dashed; border-color:#C7CCD6;}
+
+  /* ---------- LIGHTBOX ---------- */
+  .lightbox{
+    position:fixed; inset:0; background:rgba(10,12,18,0.92);
+    display:none; align-items:center; justify-content:center;
+    padding:32px; z-index:100; cursor:zoom-out;
+  }
+  .lightbox.open{display:flex;}
+  .lightbox img{max-width:min(1100px,92vw); max-height:88vh; border-radius:8px; box-shadow:0 20px 60px rgba(0,0,0,0.5);}
+
+  /* ---------- FOOTER ---------- */
+  footer{
+    background:var(--bg-dark); color:#9BA3B4;
+    padding:34px 24px; margin-top:24px;
+  }
+  .footer-inner{
+    max-width:980px; margin:0 auto;
+    display:flex; justify-content:space-between; align-items:center; flex-wrap:wrap; gap:14px;
+    font-family:var(--mono); font-size:12px;
+  }
+  .footer-inner a:hover{color:var(--cyan);}
+  .footer-brand{color:#E7E9EF; letter-spacing:.03em;}
+
+  @media (prefers-reduced-motion: reduce){
+    html{scroll-behavior:auto;}
+    .panel, .status-eyebrow, .hero h1, .hero h2, .hero p, .info-bar, .stat-strip{transition:none; animation:none; opacity:1; transform:none;}
+    .status-dot, .tag-progress{animation:none;}
+    .shot, .shot img{transition:none;}
+    .hero-spot{display:none;}
+    .marquee-track{animation:none;}
+  }
+
+  :focus-visible{outline:2px solid var(--cyan); outline-offset:2px;}
+</style>
+</head>
+<body>
+
+<div class="scroll-progress" id="scrollProgress"></div>
+<nav class="side-nav" id="sideNav" aria-label="Proje panelleri navigasyonu">
+  <a href="#pnl-00" data-label="FİMAK Panel"></a>
+  <a href="#pnl-01" data-label="MDB-SQL Data Viewer"></a>
+  <a href="#pnl-02" data-label="Üretim Veri Takip"></a>
+  <a href="#pnl-03" data-label="Depo Stok Kayıt"></a>
+  <a href="#pnl-04" data-label="İş Emri Çıkartma"></a>
+  <a href="#pnl-05" data-label="Rota ve Resim"></a>
+  <a href="#pnl-06" data-label="STP Platformu"></a>
+  <a href="#pnl-07" data-label="KKP Paneli"></a>
+  <a href="#pnl-08" data-label="Stok/Satış/Çek-Senet"></a>
+  <a href="#pnl-09" data-label="Hurda Analiz"></a>
+</nav>
+
+<header class="hero">
+  <div class="hero-grid">
+    <div class="hero-inner">
+      <span class="status-eyebrow"><span class="status-dot"></span>VERİ ANALİZİ &amp; RAPORLAMA</span>
+      <h1 class="glitch-name" data-text="Ali Büyükuyar">Ali Büyükuyar</h1>
+      <h2>Proje Panelleri <span class="dim">·</span> Excel VBA &amp; SQL ile Üretim Veri Sistemleri</h2>
+      <p>2021'den bu yana sanayi sektöründe Excel VBA ve SQL kullanarak süreç verimliliğini artıran, veri yönetimini kolaylaştıran ve iş yükünü azaltan uygulamalar geliştiriyorum. Aşağıdaki paneller, gerçek üretim ortamlarında kullanılan sistemlerden derlenmiştir.</p>
+      <div class="info-bar">
+        <div class="info-cell"><span class="k">Konum</span><span class="v">Konya, Türkiye</span></div>
+        <div class="info-cell"><span class="k">Telefon</span><span class="v">0533 282 6783</span></div>
+        <div class="info-cell"><span class="k">E-posta</span><a class="v" href="mailto:alibuyukuyar.bm@gmail.com">alibuyukuyar.bm@gmail.com</a></div>
+        <div class="info-cell"><span class="k">Unvan</span><span class="v">Veri Analisti · Raporlama Uzmanı</span></div>
+      </div>
+      <div class="stat-strip">
+        <div class="stat"><span class="stat-num">10</span><span class="stat-label">Proje Paneli</span></div>
+        <div class="stat"><span class="stat-num">5</span><span class="stat-label">Yıl Deneyim</span></div>
+        <div class="stat"><span class="stat-num">2022–26</span><span class="stat-label">Zaman Aralığı</span></div>
+        <div class="stat"><span class="stat-num">VBA·SQL</span><span class="stat-label">Temel Teknoloji</span></div>
+      </div>
+    </div>
+  </div>
+  <div class="hero-spot" id="heroSpot" aria-hidden="true"></div>
+</header>
+
+<div class="marquee" aria-hidden="true">
+  <div class="marquee-track">
+    <span>EXCEL VBA</span><span>SQL</span><span>MS ACCESS · ACCDB</span><span>USERFORM TASARIMI</span><span>SÜREÇ OTOMASYONU</span><span>KPI RAPORLAMA</span><span>IFS-ERP</span><span>NETİNOX-ERP</span><span>VERİ ANALİZİ</span>
+    <span>EXCEL VBA</span><span>SQL</span><span>MS ACCESS · ACCDB</span><span>USERFORM TASARIMI</span><span>SÜREÇ OTOMASYONU</span><span>KPI RAPORLAMA</span><span>IFS-ERP</span><span>NETİNOX-ERP</span><span>VERİ ANALİZİ</span>
+  </div>
+</div>
+
+<div class="confidential-note">
+  <span class="mark">⚠</span>
+  <span>Aşağıdaki ekran görüntülerinde yer alan firmalara ait gizli veriler (müşteri kodları, ürün bilgileri, kişisel veriler) tarafımca kapatılmıştır. Kaynak kod veya iç sistem verisi paylaşılmamaktadır — yalnızca arayüz ve işlev gösterimi amaçlıdır.</span>
+</div>
+
+<main>
+  <p class="section-label">// Proje Günlüğü — 2022 – 2026</p>
+  <h3 class="section-title">Geliştirdiğim Sistemler</h3>
+
+  <!-- PNL-00 : FIMAK PANEL (in progress, no screenshots) -->
+  <article id="pnl-00" class="panel progress" data-panel>
+    <div class="panel-head">
+      <span class="panel-id">PNL-00</span>
+      <h4 class="panel-title">FİMAK Panel — Yönetici Karar Destek Sistemi</h4>
+      <span class="tag tag-progress">Geliştirme Aşamasında</span>
+      <span class="panel-meta">FİMAK MAKİNA · 2026</span>
+    </div>
+    <div class="panel-body">
+      <div class="panel-desc">
+        Yapay zekâ destekli geliştirme araçlarıyla, gerçek zamanlı OEE, MÇF, hata oranı ve teslimat riski KPI'larını tek bir dijital panelde birleştiren, web tabanlı bir yönetici raporlama uygulaması üzerinde çalışıyorum. Ekran görüntüleri, kurumsal gizlilik nedeniyle henüz yayınlanmamaktadır.
+      </div>
+    </div>
+  </article>
+
+  <!-- PNL-01 -->
+  <article id="pnl-01" class="panel" data-panel>
+    <div class="panel-head">
+      <span class="panel-id">PNL-01</span>
+      <h4 class="panel-title">MDB-SQL Data Viewer</h4>
+      <span class="tag tag-done">Tamamlandı</span>
+      <span class="panel-meta">AYD AUTOMOTIVE · 2022</span>
+    </div>
+    <div class="panel-body">
+      <div class="panel-desc">
+        SQL (.ACCDB) formatlı veritabanlarını Excel VBA üzerinden görüntüleyip düzenleyebilen bir veri yönetim aracı geliştirdim. Tablo, sütun ve satır seviyesinde CRUD işlemlerini tek arayüzden yönetilebilir hale getirdim.
+      </div>
+      <div class="panel-gallery single">
+        <div class="shot"><img src="assets/img/slide-02.jpg" alt="MDB-SQL Data Viewer arayüzü" loading="lazy"></div>
+      </div>
+    </div>
+  </article>
+
+  <!-- PNL-02 -->
+  <article id="pnl-02" class="panel" data-panel>
+    <div class="panel-head">
+      <span class="panel-id">PNL-02</span>
+      <h4 class="panel-title">Üretim Veri Takip Sistemi Ailesi</h4>
+      <span class="tag tag-done">Tamamlandı</span>
+      <span class="panel-meta">AYD AUTOMOTIVE · 2022 – 2024</span>
+    </div>
+    <div class="panel-body">
+      <div class="panel-desc">
+        Farklı üretim hatları için uyarlanabilen, vardiya bazlı üretim, hurda ve kayıp zaman verilerini kayıt altına alan bir dizi VBA tabanlı veri giriş programı tasarladım. Sistemler personel verimliliğini günlük/aylık/yıllık bazda hesaplıyor, operasyon sürelerini takip ederek MÇF bilgilerini güncelliyor ve yöneticiler için filtrelenebilir, Excel'e aktarılabilir detaylı rapor modülleri sunuyor.
+      </div>
+      <div class="panel-gallery">
+        <div class="shot"><img src="assets/img/slide-03.jpg" alt="Veri Takip Programı 4/1" loading="lazy"></div>
+        <div class="shot"><img src="assets/img/slide-04.jpg" alt="Veri Takip Programı 4/2" loading="lazy"></div>
+        <div class="shot"><img src="assets/img/slide-05.jpg" alt="Veri Takip Programı 4/3" loading="lazy"></div>
+        <div class="shot"><img src="assets/img/slide-06.jpg" alt="Veri Takip Programı 4/4" loading="lazy"></div>
+        <div class="shot"><img src="assets/img/slide-08.jpg" alt="Veri Takip Programı 2" loading="lazy"></div>
+        <div class="shot"><img src="assets/img/slide-09.jpg" alt="Veri Takip Programı 3" loading="lazy"></div>
+      </div>
+    </div>
+  </article>
+
+  <!-- PNL-03 -->
+  <article id="pnl-03" class="panel" data-panel>
+    <div class="panel-head">
+      <span class="panel-id">PNL-03</span>
+      <h4 class="panel-title">Depo Stok Kayıt Sistemi</h4>
+      <span class="tag tag-done">Tamamlandı</span>
+      <span class="panel-meta">AYD AUTOMOTIVE · 2023</span>
+    </div>
+    <div class="panel-body">
+      <div class="panel-desc">
+        Depoya giren ve üretime çıkan malzemelerin kaydını tutan, SQL ile planlama sistemiyle anlık senkronize çalışan bir stok yönetim uygulaması geliştirdim. Sistem raf doluluk oranlarını, kayıtsız ürün analizini ve teknik resim/iş emri kontrolünü otomatikleştirdi.
+      </div>
+      <div class="panel-gallery single">
+        <div class="shot"><img src="assets/img/slide-07.jpg" alt="Depo Stok Kayıt arayüzü" loading="lazy"></div>
+      </div>
+    </div>
+  </article>
+
+  <!-- PNL-04 -->
+  <article id="pnl-04" class="panel" data-panel>
+    <div class="panel-head">
+      <span class="panel-id">PNL-04</span>
+      <h4 class="panel-title">İş Emri Çıkartma Sistemi</h4>
+      <span class="tag tag-done">Tamamlandı</span>
+      <span class="panel-meta">AYD AUTOMOTIVE · 2024</span>
+    </div>
+    <div class="panel-body">
+      <div class="panel-desc">
+        Planlamanın oluşturduğu iş emirlerini bileşen ve operasyon bilgileriyle birlikte otomatik derleyip depo birimi için baskıya hazır hale getiren bir uygulama geliştirdim. Sistem ilgili teknik resimleri sunucudan çekip belgeye otomatik yerleştiriyor.
+      </div>
+      <div class="panel-gallery single">
+        <div class="shot"><img src="assets/img/slide-10.jpg" alt="İş Emri Çıkartma arayüzü" loading="lazy"></div>
+      </div>
+    </div>
+  </article>
+
+  <!-- PNL-05 -->
+  <article id="pnl-05" class="panel" data-panel>
+    <div class="panel-head">
+      <span class="panel-id">PNL-05</span>
+      <h4 class="panel-title">Rota ve Resim Programı</h4>
+      <span class="tag tag-done">Tamamlandı</span>
+      <span class="panel-meta">AYD AUTOMOTIVE · 2024</span>
+    </div>
+    <div class="panel-body">
+      <div class="panel-desc">
+        Ürün rotasını ve teknik resmini tek ekrandan sorgulanabilir hale getiren, ana sistemlere yardımcı modül olarak çalışan bir uygulama geliştirdim.
+      </div>
+      <div class="panel-gallery single">
+        <div class="shot"><img src="assets/img/slide-11.jpg" alt="Rota ve Resim Programı arayüzü" loading="lazy"></div>
+      </div>
+    </div>
+  </article>
+
+  <!-- PNL-06 -->
+  <article id="pnl-06" class="panel" data-panel>
+    <div class="panel-head">
+      <span class="panel-id">PNL-06</span>
+      <h4 class="panel-title">STP — Sevkiyat, Log ve Takip Platformu</h4>
+      <span class="tag tag-done">Tamamlandı</span>
+      <span class="panel-meta">AYD AUTOMOTIVE · 2024</span>
+    </div>
+    <div class="panel-body">
+      <div class="panel-desc">
+        Sevkiyat sürecini uçtan uca dijitalleştiren üç parçalı bir sistem kurdum: sevk kayıtlarını SQL üzerinden anlık işleyen Sevk Programı, oluşan hataları detaylı kodlama bilgisiyle yöneticiye e-posta olarak bildiren otomatik Log Modülü ve SQL kayıtlarını anlık yansıtan bir Takip Programı. Bu üçlü yapı, sevkiyat verisini gerçek zamanlı ve izlenebilir hale getirdi.
+      </div>
+      <div class="panel-gallery">
+        <div class="shot"><img src="assets/img/slide-12.jpg" alt="STP Sevk Programı" loading="lazy"></div>
+        <div class="shot"><img src="assets/img/slide-13.jpg" alt="STP Log Modülü" loading="lazy"></div>
+        <div class="shot"><img src="assets/img/slide-14.jpg" alt="STP Takip Programı" loading="lazy"></div>
+      </div>
+    </div>
+  </article>
+
+  <!-- PNL-07 -->
+  <article id="pnl-07" class="panel" data-panel>
+    <div class="panel-head">
+      <span class="panel-id">PNL-07</span>
+      <h4 class="panel-title">KKP — Kalite Kontrol ve Birim Takip Paneli</h4>
+      <span class="tag tag-done">Tamamlandı</span>
+      <span class="panel-meta">EMPERO · 2024 – 2025</span>
+    </div>
+    <div class="panel-body">
+      <div class="panel-desc">
+        Birim personelinin görev ve devamsızlık takibini yöneten bir kalite kontrol paneli geliştirdim. Panel; görev oluşturma, aciliyet etiketleme, durum takibi ve devamsızlık kayıtlarını tek arayüzde topluyor.
+      </div>
+      <div class="panel-gallery">
+        <div class="shot"><img src="assets/img/slide-15.jpg" alt="KKP Giriş ekranı" loading="lazy"></div>
+        <div class="shot"><img src="assets/img/slide-16.jpg" alt="KKP Görev Takip" loading="lazy"></div>
+        <div class="shot"><img src="assets/img/slide-17.jpg" alt="KKP Devamsızlık Takip" loading="lazy"></div>
+      </div>
+    </div>
+  </article>
+
+  <!-- PNL-08 -->
+  <article id="pnl-08" class="panel freelance-item" data-panel>
+    <div class="panel-head">
+      <span class="panel-id">PNL-08</span>
+      <h4 class="panel-title">Stok, Satış ve Çek/Senet Yönetim Sistemi</h4>
+      <span class="tag tag-freelance">Serbest Proje</span>
+      <span class="panel-meta">GÖKTAŞ PLASTIC · 2025</span>
+    </div>
+    <div class="panel-body">
+      <div class="panel-desc">
+        Bir üretim firması için satış, stok ve çek/senet süreçlerini uçtan uca yöneten bağımsız bir masaüstü uygulaması geliştirdim. Sistem çoklu döviz kuru desteği, firma bazlı satış kaydı ve alacak/verecek bakiye raporlaması sunuyor.
+      </div>
+      <div class="panel-gallery">
+        <div class="shot"><img src="assets/img/slide-18.jpg" alt="Stok Satış Çek/Senet Giriş" loading="lazy"></div>
+        <div class="shot"><img src="assets/img/slide-19.jpg" alt="Satış Modülü" loading="lazy"></div>
+        <div class="shot"><img src="assets/img/slide-20.jpg" alt="Bakiye Rapor Modülü" loading="lazy"></div>
+      </div>
+    </div>
+  </article>
+
+  <!-- PNL-09 -->
+  <article id="pnl-09" class="panel" data-panel>
+    <div class="panel-head">
+      <span class="panel-id">PNL-09</span>
+      <h4 class="panel-title">Hurda Analiz Programı</h4>
+      <span class="tag tag-done">Tamamlandı</span>
+      <span class="panel-meta">EMPERO · 2025</span>
+    </div>
+    <div class="panel-body">
+      <div class="panel-desc">
+        Şirket içi birimlerden gelen hurda verilerini departman, hat ve hata kodu bazında analiz eden, otomatik e-posta bildirimiyle ilgili sorumlulara ve yönetime anlık raporlama yapan bir sistem geliştirdim. Program ham veriyi filtrelenebilir grafiklere dönüştürüyor, hata kodlarına göre otomatik yorum üretiyor ve ürün/hurda tarihçesini otomatik oluşturuyor. Kurulan karantina alanı sayesinde hurdanın yaklaşık %30'u geri dönüştürülerek firmaya doğrudan maliyet kazancı sağladım.
+      </div>
+      <div class="panel-gallery">
+        <div class="shot"><img src="assets/img/slide-21.jpg" alt="Hurda Analiz Programı Arayüz" loading="lazy"></div>
+        <div class="shot"><img src="assets/img/slide-22.jpg" alt="Hurda Analiz Rapor Modülü 1" loading="lazy"></div>
+        <div class="shot"><img src="assets/img/slide-23.jpg" alt="Hurda Analiz Rapor Modülü 2" loading="lazy"></div>
+        <div class="shot"><img src="assets/img/slide-24.jpg" alt="Hurda Analiz Rapor Modülü 4" loading="lazy"></div>
+      </div>
+    </div>
+  </article>
+
+</main>
+
+<footer>
+  <div class="footer-inner">
+    <span class="footer-brand">ALİ BÜYÜKUYAR — VERİ ANALİZİ &amp; RAPORLAMA</span>
+    <span>
+      <a href="mailto:alibuyukuyar.bm@gmail.com">alibuyukuyar.bm@gmail.com</a>
+      &nbsp;·&nbsp; 0533 282 6783
+      &nbsp;·&nbsp; Konya, Türkiye
+    </span>
+  </div>
+</footer>
+
+<div class="lightbox" id="lightbox">
+  <img id="lightbox-img" src="" alt="">
+</div>
+
+<script>
+  // Lightbox
+  const lb = document.getElementById('lightbox');
+  const lbImg = document.getElementById('lightbox-img');
+  document.querySelectorAll('.shot img').forEach(img => {
+    img.addEventListener('click', () => {
+      lbImg.src = img.src;
+      lbImg.alt = img.alt;
+      lb.classList.add('open');
+    });
+  });
+  lb.addEventListener('click', () => lb.classList.remove('open'));
+  document.addEventListener('keydown', e => { if(e.key === 'Escape') lb.classList.remove('open'); });
+
+  const reduceMotion = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+
+  // Scroll progress bar
+  const progressEl = document.getElementById('scrollProgress');
+  function updateProgress(){
+    const h = document.documentElement;
+    const scrolled = h.scrollTop;
+    const max = h.scrollHeight - h.clientHeight;
+    progressEl.style.width = (max > 0 ? (scrolled / max) * 100 : 0) + '%';
+  }
+  document.addEventListener('scroll', updateProgress, { passive:true });
+  updateProgress();
+
+  // Hero mouse spotlight (desktop only, respects reduced motion)
+  const heroEl = document.querySelector('.hero');
+  const spotEl = document.getElementById('heroSpot');
+  if(heroEl && spotEl && !reduceMotion && window.matchMedia('(pointer:fine)').matches){
+    heroEl.addEventListener('mousemove', e => {
+      const rect = heroEl.getBoundingClientRect();
+      const x = ((e.clientX - rect.left) / rect.width) * 100;
+      const y = ((e.clientY - rect.top) / rect.height) * 100;
+      spotEl.style.setProperty('--x', x + '%');
+      spotEl.style.setProperty('--y', y + '%');
+    });
+  }
+
+  // Scroll-reveal (progressive enhancement: JS adds hidden state itself, so no-JS users always see content)
+  const panels = document.querySelectorAll('[data-panel]');
+  if('IntersectionObserver' in window && !reduceMotion){
+    panels.forEach(p => p.classList.add('pre-reveal'));
+    const io = new IntersectionObserver((entries) => {
+      entries.forEach(entry => {
+        if(entry.isIntersecting){
+          entry.target.classList.add('in-view');
+          io.unobserve(entry.target);
+        }
+      });
+    }, { threshold: 0.1, rootMargin: '0px 0px -40px 0px' });
+    panels.forEach(p => io.observe(p));
+    // Safety net: guarantee visibility even if the observer never fires
+    setTimeout(() => panels.forEach(p => p.classList.add('in-view')), 1800);
+  }
+
+  // Side nav active state
+  const navLinks = document.querySelectorAll('.side-nav a');
+  if(navLinks.length && 'IntersectionObserver' in window){
+    const sections = Array.from(navLinks).map(a => document.querySelector(a.getAttribute('href'))).filter(Boolean);
+    const navIo = new IntersectionObserver((entries) => {
+      entries.forEach(entry => {
+        const link = document.querySelector(`.side-nav a[href="#${entry.target.id}"]`);
+        if(!link) return;
+        if(entry.isIntersecting){
+          navLinks.forEach(l => l.classList.remove('active'));
+          link.classList.add('active');
+        }
+      });
+    }, { threshold: 0.3, rootMargin: '-10% 0px -60% 0px' });
+    sections.forEach(s => navIo.observe(s));
+  }
+</script>
+
+</body>
+</html>
